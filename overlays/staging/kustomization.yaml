@@ -1,0 +1,17 @@
+# k3s-gitops-infra/overlays/staging/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: staging
+
+resources:
+  - shared
+  - api
+  - worker
+  - portfolio
+
+commonLabels:
+  env: staging
+  managed-by: argo-cd
+  team: k3s-ghost-ops
+  project: portfolio-ecosystem
