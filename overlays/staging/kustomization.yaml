@@ -10,8 +10,10 @@ resources:
   - worker
   - portfolio
 
-commonLabels:
-  env: staging
-  managed-by: argo-cd
-  team: k3s-ghost-ops
-  project: portfolio-ecosystem
+labels:
+  - includeSelectors: true
+    pairs:
+      env: staging
+      managed-by: argo-cd
+      team: k3s-ghost-ops
+      project: portfolio-ecosystem
