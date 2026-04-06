@@ -17,7 +17,7 @@ spec:
         - name: ghcr-secret
       containers:
         - name: portfolio-ui
-          image: ghcr.io/zerodayz7/portfolio-ui:latest
+          image: ghcr.io/zerodayz7/portfolio-ui:018f373
           ports:
             - containerPort: 80
           resources:
