@@ -38,7 +38,7 @@ data:
   REDIS_DB: "0"
 
   # CORS & Networking
-  CORS_ALLOW_ORIGINS: "http://portfolio.local,http://api.local,http://localhost:3000"
+  CORS_ALLOW_ORIGINS: "https://portfolio.local,http://portfolio.local,http://api.local,https://api.local,http://localhost:3000"
   CORS_ALLOW_METHODS: "GET,POST,OPTIONS,PUT,DELETE"
   CORS_ALLOW_HEADERS: "Origin,Content-Type,Accept,Authorization"
   CORS_ALLOW_CREDENTIALS: "true"
