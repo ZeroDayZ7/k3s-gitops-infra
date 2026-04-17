@@ -4,8 +4,10 @@
     ├── .env.example
     ├── docker-compose.yml
     └── secrets
-        ├── .mongo_pass
-        ├── .mysql_pass
-        └── .redis_pass
+        ├── .MONGO_PASS
+        ├── .MYSQL_ROOT_PASS
+        ├── .MYSQL_USER_PASS
+        └── .REDIS_PASS
+
 
 ```
