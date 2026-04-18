@@ -36,10 +36,13 @@ services:
     image: mysql:8
     container_name: app_mysql
     environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_pass
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_pass
       MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_pass
     secrets:
-      - mysql_pass
+      - mysql_root_pass
+      - mysql_user_pass
     ports:
       - "3306:3306"
     volumes:
@@ -54,7 +57,7 @@ services:
           "localhost",
           "-u",
           "root",
-          "-p$${MYSQL_ROOT_PASSWORD}",
+          "--password=$$(cat /run/secrets/mysql_root_pass)",
         ]
       interval: 10s
       timeout: 5s
@@ -135,11 +138,13 @@ services:
 
 secrets:
   mongo_pass:
-    file: ./secrets/.mongo_pass
-  mysql_pass:
-    file: ./secrets/.mysql_pass
+    file: ./secrets/.MONGO_PASS
+  mysql_root_pass:
+    file: ./secrets/.MYSQL_ROOT_PASS
+  mysql_user_pass:
+    file: ./secrets/.MYSQL_USER_PASS
   redis_pass:
-    file: ./secrets/.redis_pass
+    file: ./secrets/.REDIS_PASS
 
 volumes:
   mongodb_data:
