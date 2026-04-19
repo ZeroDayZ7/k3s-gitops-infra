@@ -19,7 +19,7 @@ spec:
                 name: portfolio-service
                 port:
                   number: 80
-    - host: 192.168.43.13
+    - host: 192.168.43.13.nip.io
       http:
         paths:
           - path: /
