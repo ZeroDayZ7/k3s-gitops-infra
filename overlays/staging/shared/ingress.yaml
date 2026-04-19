@@ -19,6 +19,17 @@ spec:
                 name: portfolio-service
                 port:
                   number: 80
+                  
+    - host: 192.168.43.13
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: portfolio-service
+                port:
+                  number: 80
 
     - host: api.local
       http:
