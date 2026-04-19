@@ -19,7 +19,6 @@ spec:
                 name: portfolio-service
                 port:
                   number: 80
-                  
     - host: 192.168.43.13
       http:
         paths:
@@ -30,7 +29,6 @@ spec:
                 name: portfolio-service
                 port:
                   number: 80
-
     - host: api.local
       http:
         paths:
