@@ -44,7 +44,6 @@ spec:
           ports:
             - containerPort: 8080
 
-          # --- POZIOM KONTENERA: RESTRYKCJE ---
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -52,7 +51,6 @@ spec:
               drop:
                 - ALL
 
-          # --- ZASOBY ---
           resources:
             limits:
               cpu: "500m"
@@ -98,6 +96,8 @@ spec:
             - name: migrations-dir
               mountPath: /app/migrations
               readOnly: true
+            - name: app-logs
+              mountPath: /home/appuser/logs
             - name: tmp
               mountPath: /tmp
 
@@ -105,5 +105,7 @@ spec:
         - name: migrations-dir
           configMap:
             name: api-migrations
+        - name: app-logs
+          emptyDir: {}
         - name: tmp
           emptyDir: {}
