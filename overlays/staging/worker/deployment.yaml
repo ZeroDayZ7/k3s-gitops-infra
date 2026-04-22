@@ -21,7 +21,7 @@ spec:
         command: ['sh', '-c', 'until nc -z mysql 3306; do echo waiting for mysql; sleep 2; done;']
       containers:
         - name: go-worker
-          image: ghcr.io/zerodayz7/http-server-worker:fa42f2c
+          image: ghcr.io/zerodayz7/http-server-worker:f68d8e9
           ports:
             - containerPort: 8081
           envFrom:
