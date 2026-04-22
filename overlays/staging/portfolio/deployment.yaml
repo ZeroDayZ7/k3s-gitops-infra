@@ -25,7 +25,7 @@ spec:
 
       containers:
         - name: portfolio-ui
-          image: ghcr.io/zerodayz7/portfolio-ui:a2a9754
+          image: ghcr.io/zerodayz7/portfolio-ui:7792d78
           ports:
             - containerPort: 80
 
