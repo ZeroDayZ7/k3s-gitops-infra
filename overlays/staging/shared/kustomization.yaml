@@ -5,6 +5,5 @@ resources:
   - configmap.yaml
   - databases.yaml
   - ingress.yaml
-  - ingress-argo.yaml
   - redis.yaml
   - service.yaml
