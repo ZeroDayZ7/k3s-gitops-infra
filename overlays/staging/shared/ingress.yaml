@@ -8,6 +8,11 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - portfolio.local
+        - api.local
+      secretName: portfolio-tls-secret
   rules:
     - host: portfolio.local
       http:
