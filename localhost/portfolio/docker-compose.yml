@@ -1,6 +1,12 @@
+x-common-settings: &common-settings
+  restart: ${DOCKER_RESTART_POLICY:-no}
+  networks:
+    - app-network
+
 services:
   # --- MONGO ---
   mongodb:
+    <<: *common-settings
     image: mongo:7.0-jammy
     container_name: app_mongodb
     environment:
@@ -12,27 +18,30 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
-    networks:
-      - app-network
 
   # mongo-express:
+  #   <<: *common-settings
   #   image: mongo-express:latest
   #   container_name: app_mongo_express
   #   ports:
   #     - "8081:8081"
+  #   secrets:
+  #     - mongo_pass
   #   environment:
   #     ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USER}
-  #     ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD}
-  #     ME_CONFIG_MONGODB_URL: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/
+  #     ME_CONFIG_MONGODB_URL: mongodb://${MONGO_ROOT_USER}:@mongodb:27017/
   #     ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_ROOT_USER}
-  #     ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_ROOT_PASSWORD}
+  #   command: >
+  #     sh -c "export ME_CONFIG_MONGODB_ADMINPASSWORD=$$(cat /run/secrets/mongo_pass) && 
+  #            export ME_CONFIG_BASICAUTH_PASSWORD=$$(cat /run/secrets/mongo_pass) && 
+  #            /docker-entrypoint.sh mongo-express"
   #   depends_on:
-  #     - mongodb
-  #   networks:
-  #     - app-network
+  #     mongodb:
+  #       condition: service_started
 
   # --- MYSQL ---
   mysql:
+    <<: *common-settings
     image: mysql:8
     container_name: app_mysql
     environment:
@@ -62,25 +71,28 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - app-network
 
-  # phpmyadmin:
-  #   image: phpmyadmin:5-apache
-  #   container_name: app_phpmyadmin
-  #   ports:
-  #     - "8080:80"
-  #   environment:
-  #     PMA_HOST: mysql
-  #     PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-  #   depends_on:
-  #     mysql:
-  #       condition: service_healthy
-  #   networks:
-  #     - app-network
+  phpmyadmin:
+    <<: *common-settings
+    image: phpmyadmin:5.2.3-apache
+    container_name: app_phpmyadmin
+    ports:
+      - "8080:80"
+    secrets:
+    - mysql_user_pass
+    environment:
+      PMA_HOST: mysql
+      MYSQL_USER: ${MYSQL_USER}
+    command: >
+      sh -c "export PMA_PASSWORD=$$(cat /run/secrets/mysql_user_pass) && 
+             /docker-entrypoint.sh apache2-foreground"
+    depends_on:
+      mysql:
+        condition: service_healthy
 
   # --- REDIS ---
   redis:
+    <<: *common-settings
     image: redis:8.6-alpine
     container_name: app_redis
     secrets:
@@ -91,11 +103,10 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    networks:
-      - app-network
 
   # --- TELEMETRY ---
   # otel-collector:
+  #   <<: *common-settings
   #   image: otel/opentelemetry-collector-contrib:latest
   #   container_name: otel-collector
   #   volumes:
@@ -114,27 +125,23 @@ services:
   #     - ./deployments/otel/prometheus.yaml:/etc/prometheus/prometheus.yml
   #   ports:
   #     - "9090:9090"
-  #   networks:
-  #     - app-network
 
   # jaeger:
+  #   <<: *common-settings
   #   image: jaegertracing/all-in-one:latest
   #   container_name: jaeger
   #   ports:
   #     - "16686:16686"
   #     - "4317"
-  #   networks:
-  #     - app-network
 
   # grafana:
+  #   <<: *common-settings
   #   image: grafana/grafana:latest
   #   container_name: grafana
   #   ports:
   #     - "3000:3000"
   #   environment:
   #     - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
-  #   networks:
-  #     - app-network
 
 secrets:
   mongo_pass:
