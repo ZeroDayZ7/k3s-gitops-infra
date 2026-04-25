@@ -1,14 +1,14 @@
-# k3s-gitops-infra/overlays/staging/worker/kustomization.yaml
+# k3s-gitops-infra/overlays/staging/api/kustomization.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - ../../../base/worker
+  - ../../../base/go-api
   - ../shared/configmap.yaml
 
 images:
   - name: placeholder
-    newName: ghcr.io/zerodayz7/http-server-worker
+    newName: ghcr.io/zerodayz7/http-server-api
     newTag: 8817c1e
 
 patchesStrategicMerge:

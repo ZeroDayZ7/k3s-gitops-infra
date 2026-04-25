@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: go-worker
-  namespace: staging
 spec:
   replicas: 1
   selector:
@@ -16,17 +15,24 @@ spec:
       imagePullSecrets:
         - name: ghcr-secret
       initContainers:
-      - name: wait-for-db
-        image: busybox:1.28
-        command: ['sh', '-c', 'until nc -z mysql 3306; do echo waiting for mysql; sleep 2; done;']
+        - name: wait-for-db
+          image: busybox:1.36
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z mysql 3306; do echo waiting for mysql; sleep 2; done;",
+            ]
       containers:
         - name: go-worker
-          image: ghcr.io/zerodayz7/http-server-worker:8817c1e
+          image: placeholder
           ports:
             - containerPort: 8081
           envFrom:
             - configMapRef:
                 name: api-config
+            - configMapRef:
+                name: go-worker-base-config
           env:
             - name: DB_USER
               valueFrom:
@@ -43,12 +49,8 @@ spec:
                 secretKeyRef:
                   name: mysql-secret
                   key: database
-            - name: DB_HOST
-              value: "mysql"
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: redis-secret
                   key: password
-            - name: ENV
-              value: "staging"

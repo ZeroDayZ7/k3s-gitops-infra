@@ -3,9 +3,11 @@ kind: Service
 metadata:
   name: go-api
 spec:
-  selector:
-    app: go-api
+  type: ClusterIP
   ports:
     - port: 80
       targetPort: 8080
-  type: ClusterIP
+      protocol: TCP
+      name: http
+  selector:
+    app: go-api

@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: go-api
-  namespace: staging
 spec:
   replicas: 1
   selector:
@@ -32,32 +31,20 @@ spec:
             capabilities:
               drop: ["ALL"]
           command:
-            [
-              "sh",
-              "-c",
-              "until nc -z mysql 3306; do echo waiting for mysql; sleep 2; done;",
-            ]
+            - sh
+            - -c
+            - "until nc -z mysql 3306; do echo waiting for mysql; sleep 2; done;"
 
       containers:
         - name: go-api
-          image: ghcr.io/zerodayz7/http-server-api:8817c1e
+          image: placeholder
           ports:
             - containerPort: 8080
-
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
-              drop:
-                - ALL
-
-          resources:
-            limits:
-              cpu: "500m"
-              memory: "256Mi"
-            requests:
-              cpu: "100m"
-              memory: "128Mi"
+              drop: ["ALL"]
 
           envFrom:
             - configMapRef:
@@ -74,13 +61,6 @@ spec:
                 secretKeyRef:
                   name: mysql-secret
                   key: password
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key: database
-            - name: DB_HOST
-              value: "mysql"
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
