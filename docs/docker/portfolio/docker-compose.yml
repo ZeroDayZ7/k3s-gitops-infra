@@ -1,0 +1,161 @@
+x-common-settings: &common-settings
+  restart: ${DOCKER_RESTART_POLICY:-no}
+  networks:
+    - app-network
+
+services:
+  # --- MONGO ---
+  mongodb:
+    <<: *common-settings
+    image: mongo:7.0-jammy
+    container_name: app_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_pass
+    secrets:
+      - mongo_pass
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  # mongo-express:
+  #   <<: *common-settings
+  #   image: mongo-express:latest
+  #   container_name: app_mongo_express
+  #   ports:
+  #     - "8081:8081"
+  #   secrets:
+  #     - mongo_pass
+  #   environment:
+  #     ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USER}
+  #     ME_CONFIG_MONGODB_URL: mongodb://${MONGO_ROOT_USER}:@mongodb:27017/
+  #     ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_ROOT_USER}
+  #   command: >
+  #     sh -c "export ME_CONFIG_MONGODB_ADMINPASSWORD=$$(cat /run/secrets/mongo_pass) && 
+  #            export ME_CONFIG_BASICAUTH_PASSWORD=$$(cat /run/secrets/mongo_pass) && 
+  #            /docker-entrypoint.sh mongo-express"
+  #   depends_on:
+  #     mongodb:
+  #       condition: service_started
+
+  # --- MYSQL ---
+  mysql:
+    <<: *common-settings
+    image: mysql:8
+    container_name: app_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_pass
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_pass
+    secrets:
+      - mysql_root_pass
+      - mysql_user_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "--password=$$(cat /run/secrets/mysql_root_pass)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  phpmyadmin:
+    <<: *common-settings
+    image: phpmyadmin:5.2.3-apache
+    container_name: app_phpmyadmin
+    ports:
+      - "8080:80"
+    secrets:
+    - mysql_user_pass
+    environment:
+      PMA_HOST: mysql
+      MYSQL_USER: ${MYSQL_USER}
+    command: >
+      sh -c "export PMA_PASSWORD=$$(cat /run/secrets/mysql_user_pass) && 
+             /docker-entrypoint.sh apache2-foreground"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # --- REDIS ---
+  redis:
+    <<: *common-settings
+    image: redis:8.6-alpine
+    container_name: app_redis
+    secrets:
+      - redis_pass
+    command: >
+      sh -c 'redis-server --requirepass $$(cat /run/secrets/redis_pass)'
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # --- TELEMETRY ---
+  # otel-collector:
+  #   <<: *common-settings
+  #   image: otel/opentelemetry-collector-contrib:latest
+  #   container_name: otel-collector
+  #   volumes:
+  #     - ./deployments/otel/otel-config.yaml:/etc/otel-col/config.yaml
+  #   command: ["--config=/etc/otel-col/config.yaml"]
+  #   ports:
+  #     - "4317:4317"
+  #     - "8889:8889"
+
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: prometheus
+  #   volumes:
+  #     - ./deployments/otel/prometheus.yaml:/etc/prometheus/prometheus.yml
+  #   ports:
+  #     - "9090:9090"
+
+  # jaeger:
+  #   <<: *common-settings
+  #   image: jaegertracing/all-in-one:latest
+  #   container_name: jaeger
+  #   ports:
+  #     - "16686:16686"
+  #     - "4317"
+
+  # grafana:
+  #   <<: *common-settings
+  #   image: grafana/grafana:latest
+  #   container_name: grafana
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+
+secrets:
+  mongo_pass:
+    file: ./secrets/.MONGO_PASS
+  mysql_root_pass:
+    file: ./secrets/.MYSQL_ROOT_PASS
+  mysql_user_pass:
+    file: ./secrets/.MYSQL_USER_PASS
+  redis_pass:
+    file: ./secrets/.REDIS_PASS
+
+volumes:
+  mongodb_data:
+  mysql_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge

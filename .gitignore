@@ -12,5 +12,5 @@ bin/*
 logs/
 **/combined.txt
 **/hosting.md
-secrets/
+# secrets/
 temp.md

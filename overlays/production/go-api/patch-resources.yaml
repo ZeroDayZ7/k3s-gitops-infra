@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-api
+spec:
+  template:
+    spec:
+      containers:
+        - name: go-api
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "50Mi"
+            requests:
+              cpu: "50m"
+              memory: "20Mi"
