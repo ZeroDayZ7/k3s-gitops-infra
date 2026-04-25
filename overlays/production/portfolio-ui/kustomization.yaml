@@ -1,0 +1,14 @@
+# k3s-gitops-infra/overlays/staging/api/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../../base/portfolio-ui
+
+images:
+  - name: placeholder
+    newName: ghcr.io/zerodayz7/portfolio-ui
+    newTag: 9232f1c
+
+patchesStrategicMerge:
+  - patch-resources.yaml
