@@ -21,13 +21,13 @@ labels:
       project: portfolio-ecosystem
 
 replicas:
-  - name: api
+  - name: go-api
     count: 0
 
   - name: worker
     count: 0
 
-  - name: portfolio
+  - name: portfolio-ui
     count: 0
 
   - name: mysql
