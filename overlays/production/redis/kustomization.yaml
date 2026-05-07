@@ -4,5 +4,5 @@ kind: Kustomization
 resources:
   - ../../../base/redis
 
-patchesStrategicMerge:
-  - patch-resources.yaml
+patches:
+  - path: patch-resources.yaml

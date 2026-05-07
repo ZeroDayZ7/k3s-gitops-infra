@@ -4,13 +4,12 @@ kind: Kustomization
 
 resources:
   - ../../../base/worker
-  - ../shared/configmap.yaml
 
 images:
   - name: placeholder
     newName: ghcr.io/zerodayz7/http-server-worker
     newTag: 8817c1e
 
-patchesStrategicMerge:
-  - patch-resources.yaml
-  - patch-env.yaml
+patches:
+  - path: patch-resources.yaml
+  - path: patch-env.yaml

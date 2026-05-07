@@ -10,5 +10,5 @@ images:
     newName: ghcr.io/zerodayz7/portfolio-ui
     newTag: 9232f1c
 
-patchesStrategicMerge:
-  - patch-resources.yaml
+patches:
+  - path: patch-resources.yaml
