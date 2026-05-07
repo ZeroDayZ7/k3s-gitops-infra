@@ -10,6 +10,6 @@ images:
     newName: ghcr.io/zerodayz7/http-server-api
     newTag: 8817c1e
 
-patchesStrategicMerge:
-  - patch-resources.yaml
-  - patch-env.yaml
+patches:
+  - path: patch-resources.yaml
+  - path: patch-env.yaml
