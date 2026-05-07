@@ -4,7 +4,6 @@ kind: Kustomization
 
 resources:
   - ../../../base/go-api
-  - ../shared/configmap.yaml
 
 images:
   - name: placeholder
