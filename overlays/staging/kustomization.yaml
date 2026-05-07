@@ -10,7 +10,7 @@ resources:
   - worker/
   - redis/
   - mysql/
-  - portfolio/
+  - portfolio-ui/
 
 labels:
   - includeSelectors: true
