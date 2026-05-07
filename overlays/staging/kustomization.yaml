@@ -24,7 +24,7 @@ replicas:
   - name: go-api
     count: 0
 
-  - name: worker
+  - name: go-worker
     count: 0
 
   - name: portfolio-ui
