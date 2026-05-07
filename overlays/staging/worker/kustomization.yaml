@@ -4,7 +4,6 @@ kind: Kustomization
 
 resources:
   - ../../../base/worker
-  - ../shared/configmap.yaml
 
 images:
   - name: placeholder
